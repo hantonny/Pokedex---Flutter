@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 
 enum PokemonType {
@@ -25,14 +27,17 @@ class OptionButton extends StatefulWidget {
   final String name;
   final String image;
   final String id;
-  final List<dynamic> type;
+  final List<dynamic>? type;
+  final String? level;
 
-  const OptionButton(
-      {super.key,
-      required this.name,
-      required this.image,
-      required this.id,
-      required this.type});
+  const OptionButton({
+    super.key,
+    required this.name,
+    required this.image,
+    required this.id,
+    this.type,
+    this.level,
+  });
 
   @override
   State<OptionButton> createState() => _OptionButtonState();
@@ -45,7 +50,26 @@ class _OptionButtonState extends State<OptionButton> {
 
     Color ColorBorder = Colors.blue;
 
-    Color getColorForType(String typeName) {
+    Color getColorForTypeDigimon(String typeName) {
+      switch (typeName) {
+        case 'Fresh':
+          return const Color(0xFFA8A77A);
+        case 'In-Training':
+          return const Color(0xFFF7D02C);
+        case 'Rookie':
+          return const Color(0xFFB6A136);
+        case 'Champion':
+          return const Color(0xFF6390F0);
+        case 'Ultimate':
+          return const Color(0xFF7AC74C);
+        case 'Mega':
+          return const Color(0xFFF95587);
+        default:
+          return Colors.blue; // Cor padrão
+      }
+    }
+
+    Color getColorForTypePokemon(String typeName) {
       switch (typeName) {
         case 'normal':
           ColorBorder = const Color(0xFFA8A77A);
@@ -106,7 +130,7 @@ class _OptionButtonState extends State<OptionButton> {
       }
     }
 
-    widget.type.map<String>((typeData) {
+    widget.type?.map<String>((typeData) {
       String typeName = typeData['type']['name'];
 
       types.add(Padding(
@@ -115,7 +139,7 @@ class _OptionButtonState extends State<OptionButton> {
           width: 65,
           height: 27,
           decoration: BoxDecoration(
-              color: getColorForType(typeName), // Cor de fundo
+              color: getColorForTypePokemon(typeName), // Cor de fundo
               borderRadius: const BorderRadius.all(Radius.circular(5))),
           child: Center(
               child: Text(
@@ -139,14 +163,16 @@ class _OptionButtonState extends State<OptionButton> {
         child: ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            foregroundColor: ColorBorder,
+            foregroundColor: Colors.blue,
             backgroundColor: Colors.white,
             padding: const EdgeInsets.all(10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
             side: BorderSide(
-              color: ColorBorder,
+              color: widget.level != null
+                  ? getColorForTypeDigimon('${widget.level}')
+                  : ColorBorder,
               width: 2,
             ),
           ),
@@ -157,11 +183,17 @@ class _OptionButtonState extends State<OptionButton> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Padding(
-                    padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        // Cor de fundo
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
                     child: Image.network(
                       widget.image,
                       fit: BoxFit.cover,
-                    )),
+                    ),
+                  ),
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -173,29 +205,50 @@ class _OptionButtonState extends State<OptionButton> {
                           Row(
                             children: [
                               Text(
-                                widget.id + ') ',
+                                '${widget.id}) ',
                                 style: TextStyle(
-                                  color: ColorBorder,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold
-                                ),
+                                    color: widget.level != null
+                                        ? getColorForTypeDigimon('${widget.level}')
+                                        : ColorBorder,
+                                    fontSize: widget.level != null ? 15 : 22,
+                                    fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 widget.name,
-                                style:  TextStyle(
-                                  color: ColorBorder,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold
-                                ),
+                                style: TextStyle(
+                                    color: widget.level != null
+                                        ? getColorForTypeDigimon('${widget.level}')
+                                        : ColorBorder,
+                                    fontSize: widget.level != null ? 15 : 22,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
                           const SizedBox(
                             height: 5,
                           ),
-                          Row(
-                            children: types,
-                          )
+                          widget.level == null
+                              ? Row(
+                                  children: types,
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Container(
+                                    width: 65,
+                                    height: 27,
+                                    decoration: BoxDecoration(
+                                        color:
+                                            getColorForTypeDigimon('${widget.level}'),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(5))),
+                                    child: Center(
+                                        child: Text(
+                                      '${widget.level}',
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    )),
+                                  ),
+                                )
                         ],
                       ),
                     )

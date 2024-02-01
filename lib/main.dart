@@ -1,9 +1,12 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_function_literals_in_foreach_calls
 
 import 'package:flutter/material.dart';
+import 'package:pokedex/components/app_drawer.dart';
 import 'package:pokedex/components/option_button.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:pokedex/digimon.dart';
+import 'package:pokedex/utils/app_routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,6 +25,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Pokedex'),
+     routes: {
+          AppRoutes.DIGIMON: (ctx) => const Digimon(),
+        },
     );
   }
 }
@@ -78,11 +84,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.error,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           widget.title,
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
         ),
+        
       ),
+      drawer: const AppDrawer(),
       body: SingleChildScrollView(
         child: Center(
             child: Column(
